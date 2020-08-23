@@ -14,9 +14,9 @@ def home(request):
         item = Day.objects.filter(date=day, habit__name=name).first()
         item.isDone = isDone == "true"
         item.save()        
-
     habits = Habit.objects.all()
     Data = []
+
     for habit in habits:
         Data.append(
             {
@@ -24,23 +24,21 @@ def home(request):
                 'days': Day.objects.filter(habit__name=habit.name).order_by("-date")[:5]
             }
         )
-
     days = Day.objects.all().order_by("-date")
     dates = []
+
     for day in days:
         if day.date not in dates:
             dates.append(day.date)
-
+            
     if date.today() not in dates:
         AddCurrentDay()
         dates.insert(0, date.today())
-
     context = {
         'habits': Data,
         'dates': dates[:5]
     }
-
-    return render(request, "main/base.html", context)
+    return render(request, "main/home.html", context)
 
 def AddCurrentDay():
     today = date.today()

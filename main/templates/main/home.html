@@ -1,0 +1,76 @@
+{% extends "main/base.html" %}
+{% block content %}
+    <div class="container">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                {% for date in dates %}
+                    <th scope="col">{{date|date:"d/m"}}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+                {% for habit in habits %}
+                    <tr>
+                        <th scope="row">{{habit.name}}</th>
+                        {% for item in habit.days %}
+                            {% if item.isDone %}
+                            <td>
+                                <input class="check" type="checkbox" data-day="{{item.date|date:'d/m/Y'}}" data-name="{{habit.name}}" checked>
+                            </td>
+                            {% else %}
+                            <td>
+                                <input class="check" type="checkbox" data-day="{{item.date|date:'d/m/Y'}}" data-name="{{habit.name}}">
+                            </td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script> 
+        const buttons = document.querySelectorAll("input")
+        buttons.forEach(check => {
+            check.onchange = function(){
+                CallAjax({
+                    'name': this.dataset.name,
+                    'day': this.dataset.day,
+                    'isDone': this.checked
+                })
+            };
+        });
+
+        function CallAjax(parameters) {
+            $.ajaxSetup({
+                headers: { "X-CSRFToken": getCookie("csrftoken") }
+            });
+            $.ajax({
+                url: "",
+                data: {
+                    'name': parameters.name,
+                    'day': parameters.day,
+                    'isDone': parameters.isDone
+
+                },
+                'type': 'POST',
+                success: function (items) {   // `items` is the return of the `load_categories` view function
+                    }
+                });
+        }
+        function getCookie(c_name) {
+            if (document.cookie.length > 0) {
+                c_start = document.cookie.indexOf(c_name + "=");
+                if (c_start != -1) {
+                    c_start = c_start + c_name.length + 1;
+                    c_end = document.cookie.indexOf(";", c_start);
+                    if (c_end == -1) c_end = document.cookie.length;
+                    return unescape(document.cookie.substring(c_start, c_end));
+                }
+            }
+            return "";
+        }
+    </script>
+
+{% endblock content %}

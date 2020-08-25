@@ -1,6 +1,5 @@
 {% extends "main/base.html" %}
 {% block content %}
-    <div class="container">
         <table class="table">
             <thead>
             <tr>
@@ -13,11 +12,11 @@
             <tbody>
                 {% for habit in habits %}
                     <tr>
-                        <th scope="row">{{habit.name}}</th>
+                        <th scope="row"><a href="/habit/{{ habit.name }}">{{habit.name}}</a></th>
                         {% for item in habit.days %}
                             {% if item.isDone %}
                             <td>
-                                <input class="check" type="checkbox" data-day="{{item.date|date:'d/m/Y'}}" data-name="{{habit.name}}" checked>
+                                <input class="check" type="checkbox" data-day="{{item.date|date:'d/m/Y'}}"  data-name="{{habit.name}}" checked>
                             </td>
                             {% else %}
                             <td>
@@ -29,9 +28,8 @@
                 {% endfor %}
             </tbody>
         </table>
-    </div>
     <script> 
-        const buttons = document.querySelectorAll("input")
+        const buttons = document.querySelectorAll("input");
         buttons.forEach(check => {
             check.onchange = function(){
                 CallAjax({

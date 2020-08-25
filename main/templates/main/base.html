@@ -16,7 +16,7 @@
         <header class="site-header">
             <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
               <div class="container">
-                <a class="navbar-brand mr-4" href="/">Habit Tracking</a>
+                <a class="navbar-brand mr-4" href="/">Habit Tracking / Total Score: {{ totalScore }}</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
                   aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
                   <span class="navbar-toggler-icon"></span>
@@ -26,7 +26,7 @@
                   <!-- Navbar Right Side -->
                   <div class="navbar-nav ml-auto">
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           Add New Habit
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -39,13 +39,15 @@
                                 <button type="submit" class="btn btn-primary">Add</button>
                               </form>
                         </div>
-                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </nav>
           </header>
-        {% block content %}{% endblock %}
+          <div class="container">
+            {% block content %}{% endblock %}
+          </div>
         <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
           integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"

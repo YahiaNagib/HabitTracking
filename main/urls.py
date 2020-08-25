@@ -7,6 +7,8 @@ urlpatterns = [
 
     path("", views.home, name="main"),
     path("add", views.AddHabit, name="add"),
+    path("habit/<str:name>", views.HabitDetails, name="details"),
+
 
 
 ]

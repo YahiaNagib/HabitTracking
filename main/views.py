@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from django.db.models import Sum
 from .models import Habit, Day, Score
 from datetime import datetime, date
-from django.db.models import Sum
 # Create your views here.
 
 
@@ -16,6 +17,8 @@ def home(request):
         item.isDone = isDone == "true"
         item.save()
         CalculatePoints(name)
+        scores = Score.objects.aggregate(Sum('score'))['score__sum']
+        return JsonResponse(scores, safe=False)
 
     habits = Habit.objects.all()
     Data = []

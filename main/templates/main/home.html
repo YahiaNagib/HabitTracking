@@ -1,33 +1,35 @@
 {% extends "main/base.html" %}
 {% block content %}
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">#</th>
-                {% for date in dates %}
-                    <th scope="col">{{date|date:"d/m"}}</th>
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
-                {% for habit in habits %}
-                    <tr>
-                        <th scope="row"><a href="/habit/{{ habit.name }}">{{habit.name}}</a></th>
-                        {% for item in habit.days %}
-                            {% if item.isDone %}
-                            <td>
-                                <input class="check" type="checkbox" data-day="{{item.date|date:'d/m/Y'}}"  data-name="{{habit.name}}" checked>
-                            </td>
-                            {% else %}
-                            <td>
-                                <input class="check" type="checkbox" data-day="{{item.date|date:'d/m/Y'}}" data-name="{{habit.name}}">
-                            </td>
-                            {% endif %}
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    {% for date in dates %}
+                        <th scope="col">{{date|date:"d/m"}}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                    {% for habit in habits %}
+                        <tr>
+                            <th scope="row"><a href="/habit/{{ habit.name }}">{{habit.name}}</a></th>
+                            {% for item in habit.days %}
+                                {% if item.isDone %}
+                                <td>
+                                    <input class="check" type="checkbox" data-day="{{item.date|date:'d/m/Y'}}"  data-name="{{habit.name}}" checked>
+                                </td>
+                                {% else %}
+                                <td>
+                                    <input class="check" type="checkbox" data-day="{{item.date|date:'d/m/Y'}}" data-name="{{habit.name}}">
+                                </td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     <script> 
         const buttons = document.querySelectorAll("input");
         buttons.forEach(check => {
@@ -53,7 +55,8 @@
 
                 },
                 'type': 'POST',
-                success: function (items) {   // `items` is the return of the `load_categories` view function
+                success: function (response) {   // `items` is the return of the `load_categories` view function
+                    document.querySelector(".score").innerText = response;
                     }
                 });
         }

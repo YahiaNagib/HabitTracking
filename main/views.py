@@ -3,11 +3,14 @@ from django.http import JsonResponse
 from django.db.models import Sum
 from .models import Habit, Day, Score
 from datetime import datetime, date
+import calendar
 # Create your views here.
 
 
 def home(request):
 
+    # scores = Score.objects.aggregate(Sum('score'))['score__sum']
+    scores = Score.objects.filter(date__month=date.today().month).aggregate(Sum('score'))['score__sum']
     if request.method == 'POST':
         name = request.POST.get("name")
         day = request.POST.get("day")
@@ -16,8 +19,9 @@ def home(request):
         item = Day.objects.filter(date=day, habit__name=name).first()
         item.isDone = isDone == "true"
         item.save()
-        CalculatePoints(name)
-        scores = Score.objects.aggregate(Sum('score'))['score__sum']
+        CalculatePoints(name, day.month)
+        # scores = Score.objects.aggregate(Sum('score'))['score__sum']
+        scores = Score.objects.filter(date__month=date.today().month).aggregate(Sum('score'))['score__sum']
         return JsonResponse(scores, safe=False)
 
     habits = Habit.objects.all()
@@ -49,7 +53,7 @@ def home(request):
     context = {
         'habits': Data,
         'dates': dates[:10],
-        'totalScore': Score.objects.aggregate(Sum('score'))['score__sum']
+        'totalScore': scores
     }
     return render(request, "main/home.html", context)
 
@@ -77,26 +81,58 @@ def AddHabit(request):
         newDay = Day(date=date, habit=habit)
         newDay.save()
 
+    score = Score(habit=habit)
+    score.save()
+    CalculatePoints(habit.name)
+
     return redirect("main")
 
 
 def HabitDetails(request, name):
 
-    score = Score.objects.filter(habit__name=name).first()
+    score = Score.objects.filter(habit__name=name, date__month=date.today().month).first()
     context = {
         'score': score,
-        'totalScore': Score.objects.aggregate(Sum('score'))['score__sum']
+        'totalScore': Score.objects.filter(date__month=date.today().month).aggregate(Sum('score'))['score__sum']
     }
 
     return render(request, "main/habitDetails.html", context)
 
 
-def CalculatePoints(name):
-    days = Day.objects.filter(habit__name=name).all().order_by("-date")
+def Statistics(request):
+    scoreItems = Score.objects.all().order_by("-date")
+    months = []
+    for item in scoreItems:
+        if item.date.month not in months:
+            months.append(item.date.month)
+    data = []
+    for month in months:
+        monthScores =  Score.objects.filter(date__month=month).aggregate(Sum('score'))['score__sum']
+        data.append({
+            'month': calendar.month_name[month],
+            'scores': monthScores,
+        })
+
+    context = {
+        'items': data,
+        'totalScore': Score.objects.filter(date__month=date.today().month).aggregate(Sum('score'))['score__sum']
+    }
+    return render(request, "main/statistics.html", context)
+
+
+
+def CalculatePoints(name, month):
+    days = Day.objects.filter(habit__name=name, date__month=month).all().order_by("-date")
     habit = Habit.objects.filter(name=name).first()
     unDoneDays = 0
     score = 0
     flag = False
+    habitScore = Score.objects.filter(habit__name=name, date__month=month).first()
+    # check if we are at the begining of a new month
+    if not habitScore:
+        newScore = Score(habit=habit)
+        newScore.save()
+
     for day in days:
         if habit.dateAdded > day.date: 
             continue
@@ -115,7 +151,10 @@ def CalculatePoints(name):
             flag = True
             score = score + 10
             unDoneDays = 0
+    
+    habitScore = Score.objects.filter(habit__name=name, date__month=month).first()
+    if habitScore:
+        habitScore.score = score
+        habitScore.save()
+    
 
-    habitScore = Score.objects.filter(habit__name=name).first()
-    habitScore.score = score
-    habitScore.save()

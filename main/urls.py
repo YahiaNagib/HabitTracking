@@ -9,5 +9,6 @@ urlpatterns = [
     path("add", views.AddHabit, name="add"),
     path("habit/<str:name>", views.HabitDetails, name="details"),
     path("statistics", views.Statistics, name="statistics"),
+    path("statistics/<str:name>", views.HabitStatistics, name="habitStatistics"),
 
 ]

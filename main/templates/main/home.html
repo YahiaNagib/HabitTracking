@@ -12,8 +12,8 @@
                 </thead>
                 <tbody>
                     {% for habit in habits %}
-                        <tr>
-                            <th scope="row"><a href="/habit/{{ habit.name }}">{{habit.name}}</a></th>
+                        <tr class=" {{habit.name}} {% if habit.score <= 0 %} danger {% endif %}">
+                            <th scope="row"><a class="habit-name" href="/habit/{{ habit.name }}">{{habit.name}}</a></th>
                             {% for item in habit.days %}
                                 {% if item.isDone %}
                                 <td>
@@ -38,8 +38,8 @@
                     'name': this.dataset.name,
                     'day': this.dataset.day,
                     'isDone': this.checked
-                })
-            };
+                });
+            }
         });
 
         function CallAjax(parameters) {
@@ -56,9 +56,16 @@
                 },
                 'type': 'POST',
                 success: function (response) { 
-                    document.querySelector(".score").innerText = response;
+                    document.querySelector(".score").innerText = response.totalScore;
+                    console.log(response.habitName);
+                    const row = document.querySelector(`.${response.habitName}`);
+                    if (response.habitScore <= 0 ){
+                        if (!row.classList.contains("danger")) row.classList.add("danger");
+                    } else {
+                        if (row.classList.contains("danger")) row.classList.remove("danger");
                     }
-                });
+                }
+            });
         }
         function getCookie(c_name) {
             if (document.cookie.length > 0) {

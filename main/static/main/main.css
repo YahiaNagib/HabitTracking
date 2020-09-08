@@ -41,3 +41,26 @@ h6 {
   width: 80%;
   padding: 10px;
 }
+
+.habit-name {
+  text-decoration: none !important;
+  color: #000;
+}
+
+.habit-name:hover {
+  color: #000;
+}
+
+.danger {
+  background-color: red;
+}
+
+
+.habit-statisitcs {
+  background: #ffffff;
+  padding: 10px 20px;
+  border: 1px solid #dddddd;
+  border-radius: 3px;
+  margin-bottom: 10px;
+}
+

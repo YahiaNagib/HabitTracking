@@ -6,9 +6,7 @@ from . import views
 urlpatterns = [
 
     path("", views.home, name="main"),
-    path("add", views.AddHabit, name="add"),
-    path("habit/<str:name>", views.HabitDetails, name="details"),
-    path("statistics", views.Statistics, name="statistics"),
-    path("statistics/<str:name>", views.HabitStatistics, name="habitStatistics"),
-
+    path("add", views.add_habit, name="add"),
+    path("habit/<str:name>", views.habit_details, name="details"),
+    path("statistics", views.statistics, name="statistics"),
 ]

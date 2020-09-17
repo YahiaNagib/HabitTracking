@@ -5,8 +5,8 @@ from django.utils import timezone
 
 class Habit(models.Model):
     name = models.CharField(max_length=50)
-    dateAdded = models.DateField(default=timezone.now)
-    isImportant = models.BooleanField(default=False)
+    date_added = models.DateField(default=timezone.now)
+    is_important = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -15,10 +15,10 @@ class Habit(models.Model):
 class Day(models.Model):
     date = models.DateField(default=timezone.now)
     habit = models.ForeignKey(Habit, related_name="days", on_delete=models.CASCADE)
-    isDone = models.BooleanField(default=False)
+    is_done = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"date: {self.date}, habit: {self.habit.name}, isDone: {self.isDone}"
+        return f"date: {self.date}, habit: {self.habit.name}, isDone: {self.is_done}"
 
 
 class Score(models.Model):

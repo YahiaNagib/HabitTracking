@@ -15,7 +15,7 @@
                         <tr class=" {{habit.name}} {% if habit.score <= 0 %} danger {% endif %}">
                             <th scope="row"><a class="habit-name" href="/habit/{{ habit.name }}">{{habit.name}}</a></th>
                             {% for item in habit.days %}
-                                {% if item.isDone %}
+                                {% if item.is_done %}
                                 <td>
                                     <input class="check" type="checkbox" data-day="{{item.date|date:'d/m/Y'}}"  data-name="{{habit.name}}" checked>
                                 </td>
@@ -57,7 +57,7 @@
                 'type': 'POST',
                 success: function (response) { 
                     document.querySelector(".score").innerText = response.totalScore;
-                    console.log(response.habitName);
+                                        
                     const row = document.querySelector(`.${response.habitName}`);
                     if (response.habitScore <= 0 ){
                         if (!row.classList.contains("danger")) row.classList.add("danger");

@@ -10,6 +10,7 @@ from .utils import calculate_points
 
 def home(request):
 
+    # Post request when checking a habit
     if request.method == 'POST':
         name = request.POST.get("name")
         day = request.POST.get("day")
@@ -18,6 +19,7 @@ def home(request):
         item = Day.objects.filter(date=day, habit__name=name).first()
         item.is_done = is_done == "true"
         item.save()
+        # Calculate the score of the habit for the current month
         calculate_points(name, day.month)
         # scores = Score.objects.aggregate(Sum('score'))['score__sum']
         total_score = Score.objects.filter(
@@ -33,16 +35,8 @@ def home(request):
 
     habits = Habit.objects.all()
     data = []
-    for habit in habits:
-        data.append(
-            {
-                'name': habit.name,
-                'dateAdded': habit.date_added,
-                'days': Day.objects.filter(habit__name=habit.name).order_by("-date")[:10],
-                'score': Score.objects.filter(habit__name=habit.name, date__month=date.today().month).first().score
-            }
-        )
 
+    # To have a list of all the saved dates
     days = Day.objects.all().order_by("-date")
     dates = []
     for day in days:
@@ -57,6 +51,18 @@ def home(request):
             calculate_points(habit.name, date.today().month)
         dates.insert(0, date.today())
 
+
+    for habit in habits:
+        data.append(
+            {
+                'name': habit.name,
+                'dateAdded': habit.date_added,
+                'days': Day.objects.filter(habit__name=habit.name).order_by("-date")[:10],
+                'score': Score.objects.filter(habit__name=habit.name, date__month=date.today().month).first().score
+            }
+        )
+
+   
     # scores = Score.objects.aggregate(Sum('score'))['score__sum']
     scores = Score.objects.filter(date__month=date.today().month).aggregate(
         Sum('score'))['score__sum']
@@ -91,8 +97,8 @@ def add_habit(request):
         if day.date not in dates:
             dates.append(day.date)
 
-    for date in dates[:10]:
-        new_day = Day(date=date, habit=habit)
+    for day in dates[:10]:
+        new_day = Day(date=day, habit=habit)
         new_day.save()
 
     score = Score(habit=habit)

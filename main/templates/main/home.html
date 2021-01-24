@@ -2,31 +2,35 @@
 {% block content %}
         <div class="table-responsive">
             <table class="table">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    {% for date in dates %}
-                        <th scope="col">{{date|date:"d/m"}}</th>
-                    {% endfor %}
-                </tr>
-                </thead>
-                <tbody>
-                    {% for habit in habits %}
+                {% if habits|length == 0 %}
+                    <h1> No habits </h1>
+                {% else %}
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        {% for date in dates %}
+                            <th scope="col">{{date|date:"d/m"}}</th>
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for habit in habits %}
                         <tr class=" {{habit.name}} {% if habit.score <= 0 %} danger {% endif %}">
                             <th scope="row"><a class="habit-name" href="/habit/{{ habit.name }}">{{habit.name}}</a></th>
                             {% for item in habit.days %}
-                                {% if item.is_done %}
-                                <td>
-                                    <input class="check" type="checkbox" data-day="{{item.date|date:'d/m/Y'}}"  data-name="{{habit.name}}" checked>
-                                </td>
-                                {% else %}
-                                <td>
-                                    <input class="check" type="checkbox" data-day="{{item.date|date:'d/m/Y'}}" data-name="{{habit.name}}">
-                                </td>
-                                {% endif %}
+                            {% if item.is_done %}
+                            <td>
+                                <input class="check" type="checkbox" data-day="{{item.date|date:'d/m/Y'}}"  data-name="{{habit.name}}" checked>
+                            </td>
+                            {% else %}
+                            <td>
+                                <input class="check" type="checkbox" data-day="{{item.date|date:'d/m/Y'}}" data-name="{{habit.name}}">
+                            </td>
+                            {% endif %}
                             {% endfor %}
                         </tr>
-                    {% endfor %}
+                        {% endfor %}
+                    {% endif %}
                 </tbody>
             </table>
         </div>
@@ -52,12 +56,10 @@
                     'name': parameters.name,
                     'day': parameters.day,
                     'isDone': parameters.isDone
-
                 },
                 'type': 'POST',
                 success: function (response) { 
                     document.querySelector(".score").innerText = response.totalScore;
-                                        
                     const row = document.querySelector(`.${response.habitName}`);
                     if (response.habitScore <= 0 ){
                         if (!row.classList.contains("danger")) row.classList.add("danger");
